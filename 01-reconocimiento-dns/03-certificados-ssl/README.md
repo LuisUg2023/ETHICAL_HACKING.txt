@@ -58,7 +58,6 @@ curl -fLsS 'https://crt.sh/?q=%25.h4cker.org&output=json' \
 Extraer y ordenar los nombres DNS:
 ```bash
 jq -r '.[].name_value' evidencias/EH-04/crtsh-h4cker.json \
-  | tr '\\n' '\\n' \
   | sort -u > evidencias/EH-04/subdominios-ct.txt
 
 cat evidencias/EH-04/subdominios-ct.txt
@@ -127,7 +126,7 @@ No concluir que existe una vulnerabilidad únicamente porque una herramienta mue
 
 ## 7. Ejemplo de resultados — SIMULACIÓN DIDÁCTICA
 
-<badge color="warning">Datos hipotéticos; no son resultados comprobados</badge>
+**Advertencia: datos hipotéticos; no son resultados comprobados.**
 
 La siguiente tabla muestra cómo presentar los resultados si una consulta devolviera registros semejantes. No confirma que estos nombres o parámetros pertenezcan actualmente al dominio:
 
