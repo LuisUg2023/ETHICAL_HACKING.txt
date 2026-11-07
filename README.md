@@ -16,7 +16,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 |---|---|---|---|
 | EH-01 | Reconocimiento y enumeración DNS con DNSRecon | Kali Linux, DNSRecon, dig, nslookup | Documentada; salida de laboratorio analizada |
 | EH-02 | Búsquedas de DNS | nslookup, dig, whois, host | Guía documentada; validar datos dinámicos |
-| EH-03 en adelante | Próximas prácticas Cisco NetAcad | Según laboratorio | Pendiente |
+| EH-03 | Recopilación de PII en redes sociales | OSINT, redes sociales | Resuelta con perfil ficticio; sin búsquedas reales |
 
 ## Estructura
 ```text
