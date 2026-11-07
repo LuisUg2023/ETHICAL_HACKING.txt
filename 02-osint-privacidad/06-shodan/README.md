@@ -1,161 +1,250 @@
-# EH-09 — Shodan: búsqueda de dispositivos y servicios expuestos
+# EH-09 — Práctica de laboratorio: Búsquedas de Shodan
 
 **Curso:** Cisco NetAcad — Ethical Hacker  
-**Área:** OSINT técnico / Superficie de exposición  
-**Entorno:** Kali Linux y navegador web  
-**Estado:** Guía documentada; consultas y evidencias reales pendientes.
+**Área:** OSINT técnico / reconocimiento de activos expuestos  
+**Entorno indicado por Cisco:** Kali Linux personalizado para Ethical Hacker y acceso a Internet  
+**Estado:** Contenido documentado a partir del laboratorio adjunto; ejecución y evidencias reales pendientes.
 
-## 1. Objetivos
-- Comprender qué información indexa Shodan.
-- Consultar activos y servicios expuestos mediante filtros.
-- Interpretar banners, puertos, productos y metadatos.
-- Diferenciar información indexada de una vulnerabilidad confirmada.
-- Documentar la exposición de activos propios o autorizados.
+## 1. Objetivos del laboratorio
 
-> **Alcance:** consulta únicamente dominios, IP y rangos que controles o tengas autorización expresa para evaluar. No intentes iniciar sesión, explotar servicios ni probar credenciales. Una ficha visible en Shodan no autoriza a interactuar con el sistema. No publiques IP sensibles, banners privados ni nombres internos.
+- Crear una cuenta de Shodan y obtener una clave API.
+- Utilizar el sitio web de Shodan para buscar dispositivos IoT.
+- Examinar la información general y los puertos asociados a un resultado.
+- Aplicar filtros para refinar búsquedas.
+- Utilizar Shodan desde la línea de comandos (CLI).
 
-## 2. ¿Qué es Shodan?
-Shodan es un motor de búsqueda que indexa información observada en servicios y dispositivos conectados a Internet. Sus resultados pueden incluir IP públicas, puertos, banners, nombres de producto, versiones y datos de certificados.
+## 2. Trasfondo y alcance
 
-Un banner puede estar incompleto, desactualizado o ser inexacto. Una versión identificada no demuestra por sí sola que exista una vulnerabilidad explotable. La validación debe realizarla el propietario del activo.
+Shodan es un motor de búsqueda de dispositivos y servicios conectados a Internet. Puede indexar información de teléfonos, dispositivos inteligentes, cámaras, servidores y otros sistemas. Los resultados ayudan a comprender qué servicios son visibles desde Internet y qué información anuncian.
 
-## 3. Acceso web
-1. Abre https://www.shodan.io/.
-2. Revisa la documentación y las condiciones de uso.
-3. Inicia sesión si necesitas funciones que requieran cuenta.
-4. Limita las búsquedas a un dominio o IP propios/autorizados.
-5. Conserva solo datos mínimos y sanitizados.
+Los dispositivos IoT pueden estar mal configurados o no recibir mantenimiento adecuado. La organización propietaria debe inventariarlos, limitar su exposición y mantenerlos actualizados.
 
-Los filtros, límites y funciones dependen de la cuenta y pueden cambiar.
+**Regla de autorización:** este laboratorio se realiza únicamente sobre sistemas, dominios, direcciones IP o rangos que sean propios o para los que exista autorización expresa. No intentes iniciar sesión en dispositivos encontrados, probar contraseñas predeterminadas, explotar vulnerabilidades ni acceder a cámaras o paneles ajenos. Una búsqueda en Shodan no constituye autorización para interactuar con el activo.
 
-## 4. Consultas y filtros
-Ejemplos de sintaxis para el laboratorio. Sustituye los marcadores por activos propios o autorizados:
+Las consultas públicas de demostración incluidas por el material Cisco (por ejemplo, `webcam` y la búsqueda FTP de San José) pueden mostrar activos de terceros. Se documentan para reconocer la sintaxis y el propósito didáctico, pero no se deben usar para seleccionar, contactar, escanear o acceder a dispositivos ajenos. No publiques IP, banners ni datos identificables de terceros.
 
-~~~text
-hostname:DOMINIO_AUTORIZADO
-domain:DOMINIO_AUTORIZADO
-ip:IP_PUBLICA_AUTORIZADA
-port:443 hostname:DOMINIO_AUTORIZADO
-ssl:DOMINIO_AUTORIZADO
-~~~
+## 3. Recursos necesarios
 
-| Filtro | Uso general |
+- Máquina virtual Kali Linux del curso Ethical Hacker.
+- Acceso a Internet.
+- Navegador web.
+- Cuenta de Shodan.
+- Shodan CLI (el material Cisco indica que la biblioteca se encuentra instalada por defecto en la VM del curso; comprobarlo en la versión utilizada).
+
+## 4. Parte 1 — Crear una cuenta de Shodan y obtener una clave API
+
+1. Inicia sesión en la VM Kali Linux.
+2. Abre el navegador y visita https://www.shodan.io/.
+3. Selecciona **Login** y luego **Register** para crear una cuenta, si todavía no tienes una.
+4. Completa el registro y activa la cuenta desde el correo de confirmación.
+5. Inicia sesión y revisa **Getting Started**, en particular **Search Query Fundamentals**.
+6. En la sección de cuenta, abre **Account > Overview** y localiza la clave API.
+
+**Protección de la clave API:** la clave es un secreto. No la pegues en este README, capturas, repositorios, scripts públicos ni mensajes. Si necesitas mostrar el procedimiento, utiliza el marcador `TU_API_KEY`. Si una clave se expone, revócala o rótala desde la cuenta de Shodan.
+
+### Pregunta de comprobación 1
+
+**Según Shodan, ¿cuál es la unidad fundamental de datos que recopila?**
+
+Respuesta del material Cisco: el **banner** (el contenido anunciado por un servicio y registrado por Shodan).
+
+## 5. Parte 2 — Usar el sitio web de Shodan
+
+### Paso 1. Realizar una búsqueda de dispositivos IoT
+
+El laboratorio Cisco propone introducir `webcam` en la barra de búsqueda. La página de resultados presenta estadísticas de resumen, por ejemplo:
+
+- Cantidad de resultados que coinciden con la consulta.
+- Países principales.
+- Organizaciones.
+- Productos.
+- Sistemas operativos.
+
+La cantidad de resultados visibles depende del estado de sesión, el tipo de cuenta, los créditos y las condiciones vigentes del servicio; no se debe asumir que los límites descritos en una versión antigua del curso siguen siendo iguales.
+
+**Actividad segura:** utiliza la consulta general únicamente para comprender la interfaz y las estadísticas agregadas. No abras ni interactúes con dispositivos de terceros. Si el ejercicio exige examinar una ficha individual, utiliza un activo propio o un objetivo de laboratorio expresamente autorizado.
+
+### Preguntas de comprobación 2–5
+
+1. **¿Cuál es el principal país con cámaras web encontrado por Shodan?**  
+   Respuesta histórica del material Cisco: Estados Unidos. Los resultados actuales pueden cambiar.
+
+2. **¿Qué información se incluye en la sección Información general?**  
+   Nombres de host, dominios, país, ciudad, organización, ISP y ASN.
+
+3. **¿Qué puertos están abiertos en la dirección IP seleccionada?**  
+   La respuesta depende del activo observado. El material menciona como ejemplos de puertos comunes para cámaras web 8081, 8088 y 80; no son resultados garantizados ni deben atribuirse a un dispositivo sin evidencia.
+
+4. **¿Qué información está disponible para los puertos abiertos?**  
+   Según el servicio, pueden aparecer encabezados, páginas web, certificados y otra información del servicio.
+
+### Paso 2. Comprender los filtros de Shodan
+
+El material Cisco presenta la sintaxis `filtro:valor`. Si el valor contiene espacios, se escribe entre comillas dobles.
+
+| Filtro del material | Propósito |
 |---|---|
-| hostname: | Busca resultados asociados a un nombre de host. |
-| domain: | Busca resultados relacionados con un dominio. |
-| ip: | Limita la búsqueda a una dirección IP. |
-| port: | Filtra por puerto de servicio. |
-| ssl: | Busca información relacionada con SSL/TLS; confirma la sintaxis vigente. |
+| `country:XX` | Código de país de dos letras. |
+| `city:nombre` | Ciudad. |
+| `region:nombre` | Región o estado. |
+| `product:nombre` | Producto identificado. |
+| `version:XX` | Versión de un producto. |
+| `vuln:CVE-AAAA-NNNN` | Resultados asociados a un identificador CVE, si la función está disponible. |
 
-Consulta la referencia oficial para conocer los filtros admitidos en el momento de realizar la práctica. No uses búsquedas amplias para localizar dispositivos vulnerables de terceros.
+El laboratorio Cisco incluye estos ejemplos didácticos:
 
-## 5. Shodan CLI en Kali Linux (opcional)
+```text
+webcam city:Toronto
+port:21 country:US region:CA city:"San Jose" 230
+```
 
-Comprueba si ya está instalada:
-~~~bash
-shodan version
-~~~
+La segunda consulta combina el puerto TCP 21 (FTP), filtros geográficos y el texto `230`, código de respuesta FTP asociado a un inicio de sesión satisfactorio.
 
-Si utilizas pipx:
-~~~bash
-sudo apt update
-sudo apt install pipx -y
-pipx ensurepath
-pipx install shodan
-~~~
+**Advertencia:** son consultas históricas del material del curso, no instrucciones para investigar o acceder a servidores ajenos. No utilices sus resultados para probar inicios de sesión anónimos ni para conectarte a los servicios. Para una evaluación práctica, limita los filtros a activos bajo tu control y evita publicar resultados de terceros. La sintaxis y disponibilidad de filtros pueden cambiar según la cuenta y la versión del servicio.
 
-- **sudo apt update:** actualiza el índice de paquetes.
-- **sudo apt install pipx -y:** instala pipx desde los repositorios configurados.
-- **pipx ensurepath:** configura la ruta de ejecutables instalados por pipx.
-- **pipx install shodan:** instala la CLI en un entorno aislado.
+### Preguntas de comprobación 6–7
 
-Si pipx solicita reiniciar la terminal para actualizar PATH, hazlo y luego comprueba:
-~~~bash
-shodan version
-shodan --help
-~~~
+1. **¿Cuántos servidores FTP encontró Shodan en San José que permitían inicios de sesión anónimos?**  
+   El material Cisco señala que, al redactarse el curso, el resultado era 847. Es un dato histórico y variable; no representa el resultado actual.
 
-### 5.1 Configurar la API key
-Obtén tu clave directamente desde tu cuenta de Shodan y configúrala localmente:
+2. **¿Qué información adicional puede aparecer en Información general respecto del resultado anterior?**  
+   Proveedor de nube, región de nube y servicio en la nube.
 
-~~~bash
+## 6. Parte 3 — Utilizar Shodan desde la CLI
+
+### Paso 1. Comprobar la instalación
+
+En la VM Kali del curso, abre una terminal y ejecuta:
+
+```bash
+command -v shodan
+shodan -h
+```
+
+- `command -v shodan`: comprueba si el ejecutable está disponible en el PATH.
+- `shodan -h`: muestra la ayuda y los comandos disponibles.
+
+El material Cisco indica que Shodan se instala por defecto en la VM del curso. Si el comando no existe, consulta la documentación oficial de instalación para tu versión de Kali; no asumas que el paquete está presente en cualquier instalación.
+
+### Paso 2. Inicializar la CLI
+
+En la web de Shodan, entra en **Account > Overview** y copia la clave API. Después, en la terminal:
+
+```bash
 shodan init TU_API_KEY
-~~~
+```
 
-No pegues la clave en este README, capturas o comandos compartidos. Protege el equipo y los archivos de configuración locales.
+Sustituye `TU_API_KEY` por la clave real únicamente en tu terminal local. No guardes el valor en el repositorio ni compartas una captura donde sea visible. El material Cisco espera el mensaje `Successfully initialized`.
 
-### 5.2 Consultas CLI dentro del alcance
-~~~bash
-shodan search --limit 20 'hostname:DOMINIO_AUTORIZADO'
-shodan host IP_PUBLICA_AUTORIZADA
-~~~
+### Paso 3. Mostrar la ayuda
 
-- **shodan search:** consulta el índice.
-- **--limit 20:** limita la cantidad máxima de resultados mostrados.
-- **hostname:** aplica el filtro de nombre de host.
-- **shodan host:** consulta la ficha de una IP.
-- Sustituye los marcadores por activos autorizados; no ejecutes los ejemplos literalmente.
+```bash
+shodan -h
+```
 
-La salida depende de la indexación y de los permisos de la cuenta. No se incorporan resultados supuestos.
+Revisa los comandos disponibles en la versión instalada.
 
-## 6. Interpretación de resultados
+### Paso 4. Realizar la búsqueda CLI indicada por el curso
 
-| Campo | Qué revisar |
+El material Cisco muestra:
+
+```bash
+shodan search webcam
+```
+
+Esta consulta es una demostración amplia del curso y puede devolver IP y puertos de terceros. No la uses para seleccionar objetivos ni para acceder a dispositivos. En un ejercicio práctico propio, limita la búsqueda a un activo autorizado, por ejemplo:
+
+```bash
+shodan search --limit 20 'hostname:DOMINIO_PROPIO'
+```
+
+Sustituye `DOMINIO_PROPIO` por un dominio bajo tu control. La opción `--limit` limita la cantidad de resultados mostrados. La disponibilidad de filtros en CLI puede depender del tipo de cuenta y de los créditos.
+
+### Paso 5. Consultar información adicional
+
+El material Cisco incluye estos comandos:
+
+```bash
+shodan info
+shodan myip
+shodan stats webcam
+```
+
+- `shodan info`: muestra información de la cuenta y créditos de consulta/escaneo disponibles. Los créditos pueden ser cero en cuentas sin créditos.
+- `shodan myip`: muestra la dirección IP pública de origen que Shodan observa para la conexión.
+- `shodan stats webcam`: muestra estadísticas resumidas de la consulta. La consulta `webcam` es amplia; úsala solo como demostración de estadísticas y no investigues ni contactes los resultados.
+
+Los comandos disponibles y los permisos de cuenta pueden variar. Consulta `shodan -h` y la documentación oficial si algún subcomando no está disponible.
+
+## 7. Interpretación técnica
+
+Al revisar información de un activo propio/autorizado, registra únicamente lo necesario:
+
+| Elemento | Interpretación |
 |---|---|
-| IP / hostname | Confirmar que pertenece al inventario autorizado. |
-| Puerto | Determinar si el servicio debe exponerse a Internet. |
-| Transporte | TCP/UDP, cuando se muestre. |
-| Producto / servicio | Identificación anunciada por el banner. |
-| Versión | Puede estar ausente, desactualizada o ser inexacta. |
-| Banner | Metadatos anunciados por el servicio; sanitizar al compartir. |
-| Certificado TLS | Vigencia, nombres y emisor, si se muestran. |
-| Fecha de observación | Momento en que Shodan observó el dato; no garantiza estado actual. |
+| Banner | Unidad de datos fundamental descrita por Shodan; contiene información anunciada por un servicio. |
+| Hostname / dominio | Nombre asociado al activo indexado. |
+| País / ciudad / región | Ubicación aproximada asociada al registro; no equivale a una ubicación física exacta. |
+| Organización / ISP / ASN | Datos de red y proveedor asociados. |
+| Puerto | Punto de escucha detectado por Shodan en la observación indexada. |
+| Producto / versión | Identificación anunciada; puede ser incompleta o inexacta. |
+| Encabezados HTTP | Metadatos que pueden revelar servidor, tecnologías u otra información. |
+| Certificado | Datos públicos del certificado TLS, cuando están disponibles. |
+| Fecha de observación | Contexto temporal del dato; no confirma que el servicio siga expuesto ahora. |
 
-### Validación de un posible hallazgo
-1. Confirma que el activo pertenece al alcance.
-2. Contrasta con el inventario y la configuración interna.
-3. Valida desde el lado del propietario, sin explotar el servicio.
-4. Contrasta versiones con avisos del fabricante.
-5. Registra incertidumbres, falsos positivos y fecha de observación.
-6. Comunica el hallazgo por un canal seguro.
+Un banner o una versión identificada no confirma por sí sola una vulnerabilidad explotable. Contrasta la información con el inventario del propietario, la configuración real y los avisos del fabricante.
 
-## 7. Registro y evidencias
+## 8. Registro de resultados
+
+Completa esta tabla con tus observaciones reales. No rellenes los campos con valores inventados:
 
 | Campo | Resultado |
 |---|---|
-| Fecha de consulta | Pendiente |
-| Activo autorizado (etiqueta anonimizada) | Pendiente |
+| Fecha y hora | Pendiente |
+| Versión de Kali | Pendiente |
+| Versión de Shodan CLI | Pendiente |
+| Cuenta/API configurada | Sí/No (nunca registrar la clave) |
 | Tipo de consulta | Web / CLI |
-| Filtros utilizados | Pendiente |
-| Número de resultados | Pendiente |
-| Servicios identificados | Pendiente; resumen sanitizado |
-| Posibles exposiciones | Pendiente de validar |
-| Recomendación defensiva | Pendiente |
+| Consulta aplicada | Pendiente; sin secretos |
+| Activo autorizado (identificador anonimizado) | Pendiente |
+| Estadísticas resumidas | Pendiente |
+| Puertos/servicios del activo propio | Pendiente |
+| Observaciones | Pendiente |
+| Riesgo validado por el propietario | Pendiente |
+| Medida correctiva | Pendiente |
 
-Evidencias sugeridas: captura de búsqueda con IP/dominio anonimizados, versión y ayuda de CLI, filtros usados y resumen sanitizado. No subas exportaciones completas, IP sensibles, datos personales, nombres internos ni tokens.
+### Evidencias que puedes guardar
 
-## 8. Preguntas de análisis
-1. ¿Qué diferencia existe entre Shodan y un escáner que ejecuta pruebas directamente?
-2. ¿Qué información puede revelar un banner?
-3. ¿Por qué importa la fecha de observación?
-4. ¿Por qué una versión detectada no confirma una vulnerabilidad?
-5. ¿Qué riesgos supone dejar interfaces administrativas expuestas?
-6. ¿Qué controles reducen la superficie de exposición?
-7. ¿Cómo documentar un hallazgo sin revelar información sensible?
+- Captura de la cuenta con la clave API completamente oculta.
+- Salida de `shodan -h` y `shodan info`, ocultando información de cuenta que no sea necesaria.
+- Consulta limitada a un dominio propio y resultados sanitizados.
+- Captura de estadísticas sin IP ni datos de terceros.
+- Análisis y recomendación defensiva.
 
-## 9. Recomendaciones defensivas
-- Mantener inventario de activos y servicios expuestos.
-- Cerrar puertos y servicios innecesarios.
-- Restringir interfaces administrativas mediante VPN, ACL y MFA.
-- Actualizar servicios y retirar versiones obsoletas.
-- Configurar TLS y renovar certificados.
-- Monitorizar la superficie de exposición externa.
-- Reducir la divulgación innecesaria de versiones y detalles internos.
-- Establecer un proceso de remediación.
+No subas claves API, IP públicas sensibles, banners completos, datos personales ni exportaciones sin sanitizar. Guarda evidencias en `evidencias/EH-09/` solo después de revisarlas.
 
-## 10. Referencias
+## 9. Pregunta de reflexión
+
+**¿Qué características de Shodan son especialmente valiosas para los administradores de TI?**
+
+Respuesta orientativa del material Cisco: la información de encabezados HTTP puede ayudar a identificar y reducir la divulgación de datos sensibles. Las búsquedas por CVE o producto pueden ayudar a localizar activos que requieren actualización o retirada. Para convertir un resultado en una acción, el administrador debe verificar que el activo le pertenece y validar la configuración desde su entorno.
+
+## 10. Conclusiones y controles defensivos
+
+- Shodan permite observar qué información de servicios conectados a Internet aparece indexada.
+- Los banners, puertos, productos, encabezados y certificados ayudan a identificar exposición potencial.
+- Los resultados son una fuente de reconocimiento, no una prueba definitiva de vulnerabilidad ni de estado actual.
+- Los administradores deben mantener inventario, cerrar servicios innecesarios, restringir interfaces administrativas, aplicar actualizaciones, configurar TLS y reducir la divulgación de metadatos.
+- La revisión debe realizarse dentro de un alcance autorizado y con evidencias sanitizadas.
+
+## 11. Referencias
+
+- Cisco NetAcad — *Práctica de laboratorio: Búsquedas de Shodan* (material proporcionado para esta documentación).
 - Shodan: https://www.shodan.io/
 - Shodan Help Center: https://help.shodan.io/
 - Shodan CLI: https://cli.shodan.io/
 - Shodan Developer API: https://developer.shodan.io/
-- Cisco NetAcad — Material de reconocimiento OSINT.
+
+---
+
+**Integridad académica:** esta página documenta el procedimiento del laboratorio. No afirma que las búsquedas hayan sido ejecutadas ni que los datos históricos sean resultados actuales. Completa la sección de resultados únicamente con salidas observadas en tu Kali y dentro de un alcance autorizado.
