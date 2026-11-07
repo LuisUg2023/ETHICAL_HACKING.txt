@@ -16,7 +16,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 |---|---|---|---|
 | EH-01 | Reconocimiento y enumeración DNS con DNSRecon | Kali Linux, DNSRecon, dig, nslookup | Documentada; salida de laboratorio analizada |
 | EH-02 | Búsquedas de DNS | nslookup, dig, whois, host | Guía documentada; validar datos dinámicos |
-| EH-03 | Recopilación de PII en redes sociales | OSINT, redes sociales | Resuelta con perfil ficticio; sin búsquedas reales |
+| EH-03 | Recopilación de PII en redes sociales | OSINT, redes sociales | Resuelta mediante simulación con códigos griegos; sin búsquedas reales |
 
 ## Estructura
 ```text
@@ -41,7 +41,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 4. Registrar objetivo, entorno, comandos exactos y salida real.
 5. Analizar hallazgos, impacto y mitigaciones.
 6. Guardar capturas o archivos sanitizados en `evidencias/`.
-7. Actualizar la tabla de laboratorios y el panel `index.html`.
+7. Actualizar la tabla de laboratorios, el árbol de directorios y el panel `index.html`.\n\n## Convención de identificadores\n- Utilizar códigos basados en letras griegas para identidades ficticias, perfiles, organizaciones y sistemas (por ejemplo, `PERSONA-ALFA-01` u `ORG-BETA-02`).\n- Utilizar exclusivamente dígitos latinos `0–9` para los componentes numéricos.\n- No usar nombres de personas, empresas o instituciones reales como datos de simulación.\n- Identificar expresamente todo escenario hipotético; no presentar datos inventados como hallazgos observados.
 
 ## Criterios de evidencia
 - Incluir fecha, sistema operativo, herramienta y versión cuando estén disponibles.
