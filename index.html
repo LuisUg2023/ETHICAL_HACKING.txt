@@ -25,16 +25,16 @@ code{background:#0a1424;padding:2px 6px;border-radius:5px;color:#b7e3ff}
 <p class="lead">Bitácora técnica de laboratorios de reconocimiento, enumeración y evaluación de seguridad. Cada práctica documenta objetivos, metodología, comandos, evidencias, hallazgos y controles defensivos.</p>
 </header>
 <section class="stats" aria-label="Resumen del portfolio">
-<div class="stat"><strong id="total">03</strong><span>Prácticas documentadas</span></div>
-<div class="stat"><strong>DNS</strong><span>Área de aprendizaje actual</span></div>
-<div class="stat"><strong>CLI</strong><span>Herramientas de laboratorio</span></div>
+<div class="stat"><strong id="total">04</strong><span>Prácticas documentadas</span></div>
+<div class="stat"><strong>DNS / TLS</strong><span>Áreas de aprendizaje actual</span></div>
+<div class="stat"><strong>CLI / OSINT</strong><span>Herramientas de laboratorio</span></div>
 </section>
 <h2>Laboratorios</h2>
 <div class="grid">
 <article class="card">
 <span class="tag">EH-01 · Documentada</span>
 <h3>Reconocimiento y enumeración DNS con DNSRecon</h3>
-<p>Instalación y uso de DNSRecon en Kali Linux. Interpretación de registros A, NS, SOA, MX, TXT, SRV y DNSSEC a partir de una salida de laboratorio.</p>
+<p>Instalación y uso de DNSRecon en Kali Linux. Interpretación de registros A, NS, SOA, MX, TXT, SRV y DNSSEC a partir de una salida compartida; revalidación pendiente.</p>
 <div class="links"><a href="01-reconocimiento-dns/01-dnsrecon/README.md">Abrir documentación →</a></div>
 </article>
 <article class="card">
@@ -49,6 +49,12 @@ code{background:#0a1424;padding:2px 6px;border-radius:5px;color:#b7e3ff}
 <p>Auditoría OSINT conceptual de un perfil ficticio. Utiliza códigos con letras griegas y números latinos; no contiene búsquedas reales ni datos de personas existentes.</p>
 <div class="links"><a href="02-osint-privacidad/03-pii-redes-sociales/README.md">Abrir documentación →</a></div>
 </article>
+<article class="card">
+<span class="tag pending">EH-04 · Ejemplo simulado</span>
+<h3>Identificación y análisis de certificados SSL/TLS</h3>
+<p>Consulta de Certificate Transparency con crt.sh, extracción de nombres DNS y análisis de certificados y protocolos TLS con OpenSSL y SSLScan. Resultados reales pendientes de ejecución.</p>
+<div class="links"><a href="01-reconocimiento-dns/03-certificados-ssl/README.md">Abrir documentación →</a></div>
+</article>
 </div>
 <h2>Metodología de documentación</h2>
 <div class="grid">
@@ -57,7 +63,7 @@ code{background:#0a1424;padding:2px 6px;border-radius:5px;color:#b7e3ff}
 <div class="card"><h3>03. Análisis</h3><p>Interpretación técnica, hallazgos, limitaciones y riesgos.</p></div>
 <div class="card"><h3>04. Evidencia</h3><p>Capturas y archivos sanitizados, con fecha y contexto.</p></div>
 </div>
-<div class="notice"><strong>Nota de rigor:</strong> una práctica no se considera verificada solo por tener comandos preparados. Los valores que dependen de DNS, WHOIS o PTR deben confirmarse con una ejecución actual y conservar su evidencia.</div>
+<div class="notice"><strong>Nota de rigor:</strong> una práctica no se considera verificada solo por tener comandos preparados. Los valores que dependen de DNS, WHOIS, Certificate Transparency o TLS deben confirmarse con una ejecución actual y conservar su evidencia. SSLScan requiere autorización para realizar conexiones activas.</div>
 <footer>Portfolio académico y técnico · Cisco Ethical Hacker · Uso educativo y pruebas exclusivamente autorizadas.</footer>
 </div>
 </body>
