@@ -30,6 +30,9 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 │   │   └── README.md
 │   └── 02-busquedas-dns/
 │       └── README.md
+├── 02-osint-privacidad/
+│   └── 03-pii-redes-sociales/
+│       └── README.md
 └── evidencias/
     └── README.md
 ```
