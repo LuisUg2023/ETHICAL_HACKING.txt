@@ -5,22 +5,26 @@
 **Objetivo:** Identificar qué información de identificación personal (PII) puede quedar expuesta públicamente en redes sociales y evaluar cómo podría ser aprovechada por un actor de amenazas.  
 **Estado:** Ejercicio resuelto mediante un escenario completamente ficticio. No se investigó a una persona real ni se crearon cuentas falsas.
 
-> **Aviso sobre los datos:** todos los nombres, cuentas, lugares, instituciones, publicaciones y hallazgos de esta práctica son inventados. Se utilizan exclusivamente para responder académicamente las preguntas del laboratorio.
+> **Convención de identificación:** se utilizan nombres-código basados en letras del alfabeto griego (ALFA, BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, LAMBDA y OMEGA). Todos los números se escriben con dígitos latinos (0–9). Los códigos son etiquetas de laboratorio, no nombres personales ni identidades reales.
+
+> **Aviso sobre los datos:** todos los perfiles, usuarios, organizaciones, instituciones, publicaciones y hallazgos de esta práctica son escenarios inventados. No se afirma que existan en redes sociales ni en registros públicos.
 
 ## Perfil ficticio utilizado
 
 | Campo | Dato simulado |
 |---|---|
-| Nombre | Daniel Andrés Mendoza Vera |
-| Usuario principal | `daniel.mendoza.ec` |
-| Edad | 27 años |
-| Ciudad | Guayaquil, Ecuador |
+| Identificador de persona | PERSONA-ALFA-01 |
+| Usuario principal | usuario_beta_07 |
+| Edad | 27 años (dato simulado) |
+| Ciudad | LOCALIDAD-GAMMA-03 (ubicación ficticia de laboratorio) |
 | Profesión | Técnico de soporte informático |
-| Empresa | TecnoRed Solutions (ficticia) |
-| Educación | Instituto Tecnológico del Pacífico (ficticio) |
+| Empresa | ORG-DELTA-02 |
+| Educación | INST-EPSILON-04 |
 | Pasatiempos | Videojuegos, ciclismo y fotografía |
-| Redes sociales | Facebook, Instagram, LinkedIn y X |
-| Mascota | Perro llamado Max |
+| Perfiles simulados | RED-ZETA-01, RED-ETA-02, RED-THETA-03 y RED-LAMBDA-04 |
+| Mascota | ANIMAL-OMEGA-01 |
+
+Los identificadores anteriores son etiquetas artificiales para el ejercicio. No representan nombres, usuarios, empresas o instituciones verificadas.
 
 ## Parte 1 — Recopile información a través de los medios sociales
 
@@ -30,27 +34,27 @@ En un escenario real, la persona revisaría su propio nombre y variantes de usua
 
 ### Paso 2. Auditoría como extraño
 
-Se simularon cuatro perfiles públicos:
+Se simularon cuatro perfiles públicos identificados únicamente por códigos:
 
-- **LinkedIn:** nombre, fotografía profesional, cargo, empresa e historial educativo.
-- **Facebook:** publicaciones de cumpleaños, comentarios de familiares y fotografías de reuniones.
-- **Instagram:** fotografías de ciclismo, lugares visitados, mascota y etiquetas geográficas.
-- **X:** comentarios públicos sobre tecnología, videojuegos y eventos locales.
+- **RED-ZETA-01:** cargo, organización codificada e historial educativo.
+- **RED-ETA-02:** publicaciones de cumpleaños, comentarios de contactos y fotografías de reuniones.
+- **RED-THETA-03:** fotografías de ciclismo, lugares visitados, mascota y etiquetas geográficas.
+- **RED-LAMBDA-04:** comentarios públicos sobre tecnología, videojuegos y eventos locales.
 
 ### Pregunta: ¿Qué tipo de información sobre usted se reveló en su investigación?
 
 **Respuesta:**
 
-En la auditoría simulada del perfil de Daniel Mendoza se identificó que un desconocido podría recopilar los siguientes datos:
+En la auditoría simulada de PERSONA-ALFA-01 se identificó que un desconocido podría recopilar los siguientes datos:
 
-1. **Identidad:** nombre completo, edad aproximada y fotografía de perfil.
-2. **Información laboral:** empresa donde trabaja, cargo y conocimientos técnicos.
-3. **Educación:** institución educativa y formación profesional.
-4. **Ubicación:** ciudad de residencia y lugares que frecuenta, inferidos a partir de publicaciones y etiquetas.
+1. **Identidad:** código de perfil, edad aproximada y fotografía simulada.
+2. **Información laboral:** organización codificada, cargo y conocimientos técnicos.
+3. **Educación:** institución identificada mediante un código y formación profesional.
+4. **Ubicación:** localidad codificada y lugares que frecuenta, inferidos a partir de publicaciones y etiquetas.
 5. **Intereses personales:** videojuegos, ciclismo, fotografía y tecnología.
-6. **Relaciones personales:** nombres o perfiles de amigos y familiares que aparecen en comentarios y fotografías.
+6. **Relaciones personales:** perfiles codificados de contactos que aparecen en comentarios y fotografías.
 7. **Rutina:** publicaciones repetidas que podrían permitir inferir horarios de trabajo y actividades recreativas.
-8. **Preferencias:** marcas de dispositivos y productos tecnológicos mencionados en publicaciones.
+8. **Preferencias:** marcas de dispositivos y productos tecnológicos mencionados en publicaciones simuladas.
 
 Aunque cada dato por separado puede parecer poco importante, su combinación permite elaborar un perfil personal más completo. En este caso, la simulación muestra exposición potencial de identidad, empleo, educación, intereses, relaciones y patrones de actividad.
 
@@ -60,7 +64,7 @@ Aunque cada dato por separado puede parecer poco importante, su combinación per
 
 **Respuesta:**
 
-Un atacante podría utilizar el nombre de la empresa y el cargo de Daniel para preparar mensajes de phishing que aparenten proceder de Recursos Humanos, soporte técnico o un supervisor. También podría investigar la estructura de la organización y enviar archivos o enlaces maliciosos relacionados con sus funciones laborales. Si conoce sus horarios o responsabilidades, podría intentar suplantar a un compañero o manipularlo mediante ingeniería social.
+Un atacante podría utilizar la organización codificada y el cargo de PERSONA-ALFA-01 para preparar mensajes de phishing que aparenten proceder de Recursos Humanos, soporte técnico o un supervisor. También podría investigar la estructura de una organización y enviar archivos o enlaces maliciosos relacionados con sus funciones laborales. Si conoce sus horarios o responsabilidades, podría intentar suplantar a un compañero o manipularlo mediante ingeniería social.
 
 **Riesgos:** phishing dirigido, suplantación de identidad, fraude laboral y acceso no autorizado a cuentas corporativas.
 
@@ -68,7 +72,7 @@ Un atacante podría utilizar el nombre de la empresa y el cargo de Daniel para p
 
 **Respuesta:**
 
-Los intereses en videojuegos, ciclismo y fotografía pueden utilizarse para personalizar engaños. Por ejemplo, el atacante podría publicar una supuesta promoción de videojuegos, ofrecer accesorios de ciclismo falsos o enviar enlaces a concursos de fotografía fraudulentos. Estos mensajes pueden resultar creíbles porque están relacionados con actividades que la persona comparte públicamente.
+Los intereses en videojuegos, ciclismo y fotografía pueden utilizarse para personalizar engaños. Por ejemplo, el atacante podría publicar una supuesta promoción de videojuegos, ofrecer accesorios de ciclismo falsos o enviar enlaces a concursos de fotografía fraudulentos. Estos mensajes pueden resultar creíbles porque están relacionados con actividades que el perfil comparte públicamente.
 
 **Riesgos:** robo de credenciales, fraude en compras, descarga de malware y exposición de datos financieros.
 
@@ -76,7 +80,7 @@ Los intereses en videojuegos, ciclismo y fotografía pueden utilizarse para pers
 
 **Respuesta:**
 
-Las conversaciones públicas pueden revelar nombres de familiares, relaciones personales, fechas importantes, viajes, lugares frecuentes y detalles privados. Un atacante podría aprovechar esa información para hacerse pasar por un familiar o amigo, inventar una emergencia y solicitar dinero o información confidencial. También puede utilizar los datos para responder preguntas de recuperación de cuentas o construir mensajes de ingeniería social más convincentes.
+Las conversaciones públicas pueden revelar códigos de contacto, relaciones personales, fechas importantes, viajes, lugares frecuentes y detalles privados. Un atacante podría aprovechar esa información para hacerse pasar por un familiar o contacto, inventar una emergencia y solicitar dinero o información confidencial. También puede utilizar los datos para responder preguntas de recuperación de cuentas o construir mensajes de ingeniería social más convincentes.
 
 **Riesgos:** fraude por suplantación, estafas familiares, robo de cuentas y exposición de información privada de terceros.
 
@@ -105,16 +109,17 @@ La práctica demuestra que la exposición no depende únicamente de una publicac
 
 ## Conclusión
 
-La auditoría simulada demuestra que las redes sociales pueden exponer información suficiente para construir un perfil detallado de una persona. Un atacante podría aprovechar esos datos para desarrollar campañas de phishing dirigido, suplantación de identidad y fraude. La principal medida preventiva consiste en reducir la información pública, controlar la privacidad de las cuentas, proteger el acceso con MFA y revisar periódicamente la huella digital.
+La auditoría simulada demuestra que las redes sociales pueden exponer información suficiente para construir un perfil detallado. Un atacante podría aprovechar esos datos para desarrollar campañas de phishing dirigido, suplantación de identidad y fraude. La principal medida preventiva consiste en reducir la información pública, controlar la privacidad de las cuentas, proteger el acceso con MFA y revisar periódicamente la huella digital.
 
 ## Evidencia y limitaciones
 
-- **Tipo de ejercicio:** simulación académica con identidad inventada.
+- **Tipo de ejercicio:** simulación académica con identificadores codificados.
+- **Convención:** letras griegas para códigos alfabéticos y dígitos latinos (0–9) para números.
 - **Búsquedas reales:** no realizadas.
 - **Cuentas falsas creadas:** ninguna.
 - **Capturas de pantalla reales:** no disponibles.
 - **Resultados observados:** no aplican; los ejemplos son escenarios hipotéticos.
-- **Validación:** la respuesta conceptual está desarrollada; una auditoría personal real requeriría autorización, revisión de los perfiles propios y registro de evidencias sin divulgar PII.
+- **Validación:** la respuesta conceptual está desarrollada; una auditoría real requeriría autorización, revisión de perfiles propios y registro de evidencias sin divulgar PII.
 
 ## Referencias de estudio
 
