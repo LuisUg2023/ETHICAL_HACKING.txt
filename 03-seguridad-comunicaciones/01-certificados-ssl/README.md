@@ -1,4 +1,4 @@
-# EH-04 — Identificación y análisis de certificados SSL/TLS con crt.sh y SSLScan
+# EH-07 — Identificación y análisis de certificados SSL/TLS con crt.sh y SSLScan
 
 **Curso:** Cisco NetAcad — Ethical Hacker  
 **Área:** Seguridad de comunicaciones / Certificate Transparency  
@@ -55,110 +55,89 @@ Abrir en el navegador: https://crt.sh/?q=%25.h4cker.org
 
 Descargar los resultados JSON:
 ```bash
-mkdir -p evidencias/EH-04
-curl -fLsS 'https://crt.sh/?q=%25.h4cker.org&output=json' -o evidencias/EH-04/crtsh-h4cker.json
+mkdir -p evidencias/EH-07
+curl -fLsS 'https://crt.sh/?q=%25.h4cker.org&output=json' -o evidencias/EH-07/crtsh-h4cker.json
 ```
 
 **Qué hace cada línea:**
-- `mkdir -p evidencias/EH-04`: crea la carpeta para las evidencias; `-p` evita error si ya existe.
+- `mkdir -p evidencias/EH-07`: crea la carpeta para las evidencias; `-p` evita error si ya existe.
 - `curl -fLsS 'URL' -o archivo.json`: solicita la consulta JSON a crt.sh y guarda la respuesta en el archivo indicado. `-f` falla ante errores HTTP, `-L` sigue redirecciones, `-s` reduce la salida y `-S` muestra errores, `-o` define el archivo de destino.
 
 Extraer nombres DNS sin duplicados:
 ```bash
-jq -r '.[].name_value' evidencias/EH-04/crtsh-h4cker.json | sort -u > evidencias/EH-04/subdominios-ct.txt
-cat evidencias/EH-04/subdominios-ct.txt
+jq -r '.[].name_value' evidencias/EH-07/crtsh-h4cker.json | sort -u > evidencias/EH-07/subdominios-ct.txt
+cat evidencias/EH-07/subdominios-ct.txt
 ```
 
 **Qué hace cada línea:**
 - `jq -r '.[].name_value' archivo.json`: recorre los objetos del arreglo JSON y muestra el campo `name_value` sin comillas.
 - `| sort -u`: recibe esos nombres por la tubería, los ordena y elimina duplicados.
-- `> evidencias/EH-04/subdominios-ct.txt`: guarda el resultado en un archivo; sobrescribe el archivo si ya existía.
-- `cat evidencias/EH-04/subdominios-ct.txt`: muestra en pantalla la lista obtenida.
+- `> evidencias/EH-07/subdominios-ct.txt`: guarda el resultado en un archivo; sobrescribe el archivo si ya existía.
+- `cat evidencias/EH-07/subdominios-ct.txt`: muestra en pantalla la lista obtenida.
 
 Consultar datos de los certificados:
 ```bash
-jq -r '.[] | [.id, .issuer_name, .common_name, .name_value, .not_before, .not_after] | @tsv' evidencias/EH-04/crtsh-h4cker.json
+jq -r '.[] | [.id, .issuer_name, .common_name, .name_value, .not_before, .not_after] | @tsv' evidencias/EH-07/crtsh-h4cker.json
 ```
 
-**Qué hace la línea:**
-- `jq -r`: procesa el JSON y evita comillas en la salida.
-- `.[ ]` (en el comando se escribe `.[ ]` sin espacios como `.[ ]`? No): la expresión correcta es `.[]`, que recorre cada certificado.
-- `[ ... ]`: selecciona ID, emisor, nombre común, nombres SAN y fechas de vigencia.
-- `@tsv`: presenta los campos separados por tabuladores para facilitar su lectura.
+**Qué hace la línea:** `.[]` recorre cada certificado; el arreglo selecciona ID, emisor, nombre común, SAN y fechas; `@tsv` presenta los campos separados por tabuladores.
 
 **Interpretación:** `not_before` y `not_after` son fechas de vigencia registradas en CT. Un certificado puede ser antiguo, renovado o revocado; un nombre DNS encontrado no demuestra que el host siga activo.
 
 ## 5. Parte B — Inspección de certificado con OpenSSL
 
-Esta conexión consulta el certificado que presenta el servicio. Realizarla solo dentro del alcance autorizado por el laboratorio.
+Realizar conexiones solo dentro del alcance autorizado.
 
-Mostrar la negociación y cadena TLS:
 ```bash
 openssl s_client -connect h4cker.org:443 -servername h4cker.org </dev/null
 ```
 
-**Qué hace cada parte:**
 - `openssl s_client`: inicia un cliente TLS de diagnóstico.
 - `-connect h4cker.org:443`: conecta al puerto 443 del dominio.
-- `-servername h4cker.org`: envía SNI (Server Name Indication), para que el servidor seleccione el certificado correspondiente al nombre solicitado.
-- `</dev/null`: envía fin de entrada inmediatamente, evitando que el comando espere datos escritos por teclado.
+- `-servername h4cker.org`: envía SNI para que el servidor seleccione el certificado correspondiente.
+- `</dev/null`: envía fin de entrada inmediatamente, evitando esperar datos escritos por teclado.
 
-Extraer campos principales del certificado:
+Extraer campos principales:
 ```bash
 openssl s_client -connect h4cker.org:443 -servername h4cker.org </dev/null 2>/dev/null | openssl x509 -noout -subject -issuer -dates -serial -fingerprint -sha256
 ```
 
-**Qué hace cada parte:**
-- El primer `openssl s_client ...` establece la conexión TLS y obtiene la cadena/certificado.
-- `2>/dev/null` descarta los mensajes de diagnóstico enviados por el proceso a stderr.
-- `|` pasa la salida al siguiente comando.
-- `openssl x509` interpreta el certificado X.509 recibido.
-- `-noout` evita imprimir el certificado codificado completo.
-- `-subject` muestra el titular; `-issuer` muestra la autoridad emisora.
-- `-dates` muestra inicio y fin de vigencia.
-- `-serial` muestra el número de serie.
-- `-fingerprint -sha256` calcula la huella SHA-256 del certificado.
+- `2>/dev/null`: descarta mensajes de diagnóstico enviados a stderr.
+- `|`: pasa la salida al siguiente comando.
+- `openssl x509`: interpreta el certificado X.509 recibido.
+- `-noout`: evita imprimir el certificado codificado completo.
+- `-subject` y `-issuer`: muestran titular y autoridad emisora.
+- `-dates`: muestra inicio y fin de vigencia.
+- `-serial`: muestra el número de serie.
+- `-fingerprint -sha256`: calcula la huella SHA-256 del certificado.
 
 Revisar SAN, clave pública y firma:
 ```bash
 openssl s_client -connect h4cker.org:443 -servername h4cker.org </dev/null 2>/dev/null | openssl x509 -noout -text | grep -E 'Subject:|Issuer:|DNS:|Public Key Algorithm|Public-Key|Signature Algorithm|Not Before|Not After'
 ```
 
-**Qué hace cada parte:**
-- `openssl x509 -noout -text`: decodifica y muestra los campos del certificado en formato legible.
-- `grep -E 'patrón'`: filtra las líneas que coinciden con cualquiera de los patrones indicados.
-- `Subject` e `Issuer`: ayudan a identificar titular y emisor.
-- `DNS:`: permite localizar nombres SAN.
-- `Public Key Algorithm` y `Public-Key`: indican algoritmo y tamaño de clave.
-- `Signature Algorithm`: muestra el algoritmo de firma del certificado.
-- `Not Before` y `Not After`: indican el periodo de validez.
+- `openssl x509 -noout -text`: muestra los campos del certificado en formato legible.
+- `grep -E 'patrón'`: filtra líneas que coinciden con cualquiera de los patrones indicados.
+- `DNS:`: permite localizar nombres SAN; los demás patrones muestran titular, emisor, clave, firma y vigencia.
 
 ## 6. Parte C — Enumeración TLS con SSLScan
 
 **Advertencia:** SSLScan realiza conexiones activas. No escanear infraestructura ajena sin autorización. Si el ejercicio no autoriza el dominio, utilizar un servidor de laboratorio propio.
 
-Ejecutar SSLScan:
 ```bash
 sslscan h4cker.org
+sslscan h4cker.org | tee evidencias/EH-07/sslscan-h4cker.txt
 ```
 
-**Qué hace la línea:** ejecuta SSLScan contra el servicio del dominio y puerto TLS predeterminado, mostrando protocolos aceptados, suites criptográficas, preferencias y datos del certificado que el servidor presenta.
+- `sslscan h4cker.org`: enumera protocolos, suites criptográficas, preferencias y datos del certificado del host.
+- `|`: envía la salida estándar a otro programa.
+- `tee archivo.txt`: muestra el resultado en pantalla y lo guarda en el archivo.
 
-Guardar el resultado:
-```bash
-sslscan h4cker.org | tee evidencias/EH-04/sslscan-h4cker.txt
-```
-
-**Qué hace cada parte:**
-- `sslscan h4cker.org`: realiza el análisis TLS del host.
-- `|`: envía la salida estándar al siguiente programa.
-- `tee archivo.txt`: muestra el resultado en pantalla y, al mismo tiempo, lo guarda en el archivo indicado.
-
-Revisar protocolos, suites, certificado, emisor, fechas y tamaño de clave. Interpretar los resultados según la configuración esperada y las recomendaciones actuales; la presencia de un protocolo o suite no basta por sí sola para declarar una vulnerabilidad.
+La presencia de un protocolo o suite no basta por sí sola para declarar una vulnerabilidad; interpreta el resultado según la configuración esperada y recomendaciones actuales.
 
 ## 7. Ejemplo de resultados — SIMULACIÓN DIDÁCTICA
 
-**Advertencia: datos hipotéticos; no son resultados comprobados.**
+**Datos hipotéticos; no son resultados comprobados.**
 
 | Elemento | Ejemplo simulado | Interpretación |
 |---|---|---|
@@ -167,8 +146,7 @@ Revisar protocolos, suites, certificado, emisor, fechas y tamaño de clave. Inte
 | Clave pública | RSA, 2048 bits | Tamaño ilustrativo |
 | Firma | SHA-256 con RSA | Ejemplo de algoritmo de firma |
 | Protocolos TLS | TLS 1.2 y TLS 1.3 | Protocolos hipotéticos aceptados |
-| Vigencia | Pendiente | Debe obtenerse de los datos reales `not_before` y `not_after` |
-| Suites criptográficas | Pendiente | Deben copiarse de la salida real de SSLScan |
+| Vigencia y suites | Pendiente | Debe obtenerse de las salidas reales |
 
 No utilizar esta tabla como evidencia del dominio. Sustituirla por la salida real después de ejecutar las consultas.
 
@@ -192,10 +170,8 @@ openssl version
 sslscan --version
 ```
 
-**Qué hace cada línea:**
-- `date -Is`: muestra fecha y hora en formato ISO 8601, con zona horaria.
-- `curl --version`: muestra versión y características de curl.
-- `| head -n 1`: conserva únicamente la primera línea de la salida.
+- `date -Is`: muestra fecha y hora en formato ISO 8601.
+- `curl --version`: muestra versión y características de curl; `| head -n 1` conserva la primera línea.
 - `jq --version`: muestra la versión de jq.
 - `openssl version`: muestra la versión de OpenSSL.
 - `sslscan --version`: muestra la versión de SSLScan.
@@ -210,7 +186,7 @@ sslscan --version
 - [ ] Identificación expresa de cualquier dato simulado.
 
 ## 11. Conclusiones
-crt.sh permite consultar certificados registrados públicamente en Certificate Transparency y descubrir nombres DNS históricos. OpenSSL permite inspeccionar el certificado que presenta un servidor, mientras SSLScan enumera la configuración TLS mediante conexiones activas. Es necesario diferenciar certificados históricos de servicios activos y mantener separadas las simulaciones de las evidencias reales. La práctica quedará verificada cuando se adjunten las salidas reales, fechadas y obtenidas dentro del alcance autorizado.
+crt.sh permite consultar certificados registrados públicamente en Certificate Transparency y descubrir nombres DNS históricos. OpenSSL permite inspeccionar el certificado que presenta un servidor, mientras SSLScan enumera la configuración TLS mediante conexiones activas. Es necesario diferenciar certificados históricos de servicios activos y mantener separadas las simulaciones de las evidencias reales. La práctica quedará verificada cuando se adjunten salidas reales, fechadas y obtenidas dentro del alcance autorizado.
 
 ## 12. Referencias
 - crt.sh: https://crt.sh/
