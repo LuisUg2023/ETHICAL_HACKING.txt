@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Portfolio de laboratorios prácticos Cisco Ethical Hacker.">
+<title>Portfolio | Cisco Ethical Hacker</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#17263d;--text:#e8eef8;--muted:#9fb0c8;--line:#2b3b55;--accent:#4fd1c5;--accent2:#60a5fa;--warn:#fbbf24;--ok:#86efac}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0%,#18304b 0,transparent 32%),var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1120px;margin:auto;padding:28px 20px 60px}
+header{padding:38px 0 26px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--accent);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}
+h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.08;margin:12px 0}.lead{max-width:760px;color:var(--muted);font-size:1.08rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:24px 0}.stat,.card,.notice{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}.stat strong{display:block;font-size:1.65rem;color:var(--accent)}.stat span{color:var(--muted);font-size:.9rem}
+h2{font-size:1.45rem;margin:34px 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.card{display:flex;flex-direction:column;gap:8px;transition:.2s}.card:hover{border-color:var(--accent2);transform:translateY(-2px)}.tag{display:inline-block;width:max-content;padding:3px 9px;border-radius:999px;background:#193b42;color:#9ff5e9;font-size:.76rem;font-weight:700}.tag.pending{background:#473719;color:#ffe2a0}.card h3{margin:3px 0;font-size:1.15rem}.card p{margin:0;color:var(--muted)}.card .links{margin-top:auto;padding-top:12px}
+.notice{margin-top:24px;border-left:4px solid var(--warn);color:var(--muted)}.notice strong{color:var(--text)}footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+code{background:#0a1424;padding:2px 6px;border-radius:5px;color:#b7e3ff}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="eyebrow">Cybersecurity learning · Cisco NetAcad</div>
+<h1>Portfolio de<br> Cisco Ethical Hacker</h1>
+<p class="lead">Bitácora técnica de laboratorios de reconocimiento, enumeración y evaluación de seguridad. Cada práctica documenta objetivos, metodología, comandos, evidencias, hallazgos y controles defensivos.</p>
+</header>
+<section class="stats" aria-label="Resumen del portfolio">
+<div class="stat"><strong id="total">02</strong><span>Prácticas documentadas</span></div>
+<div class="stat"><strong>DNS</strong><span>Área de aprendizaje actual</span></div>
+<div class="stat"><strong>CLI</strong><span>Herramientas de laboratorio</span></div>
+</section>
+<h2>Laboratorios</h2>
+<div class="grid">
+<article class="card">
+<span class="tag">EH-01 · Documentada</span>
+<h3>Reconocimiento y enumeración DNS con DNSRecon</h3>
+<p>Instalación y uso de DNSRecon en Kali Linux. Interpretación de registros A, NS, SOA, MX, TXT, SRV y DNSSEC a partir de una salida de laboratorio.</p>
+<div class="links"><a href="01-reconocimiento-dns/01-dnsrecon/README.md">Abrir documentación →</a></div>
+</article>
+<article class="card">
+<span class="tag pending">EH-02 · Validación pendiente</span>
+<h3>Práctica Cisco: Búsquedas de DNS</h3>
+<p>Consultas con nslookup, dig, whois y host; identificación de registros, información de dominios y resolución DNS inversa mediante PTR.</p>
+<div class="links"><a href="01-reconocimiento-dns/02-busquedas-dns/README.md">Abrir documentación →</a></div>
+</article>
+<article class="card">
+<span class="tag pending">EH-03 · Próxima práctica</span>
+<h3>Espacio para el siguiente laboratorio</h3>
+<p>Se agregará aquí cuando se comparta la guía, los resultados o las evidencias del siguiente ejercicio Cisco NetAcad.</p>
+<div class="links"><a href="00-guia/plantilla-practica.md">Ver plantilla →</a></div>
+</article>
+</div>
+<h2>Metodología de documentación</h2>
+<div class="grid">
+<div class="card"><h3>01. Preparación</h3><p>Objetivo, alcance, autorización, sistema operativo y herramientas.</p></div>
+<div class="card"><h3>02. Ejecución</h3><p>Comandos reproducibles y transcripción fiel de resultados.</p></div>
+<div class="card"><h3>03. Análisis</h3><p>Interpretación técnica, hallazgos, limitaciones y riesgos.</p></div>
+<div class="card"><h3>04. Evidencia</h3><p>Capturas y archivos sanitizados, con fecha y contexto.</p></div>
+</div>
+<div class="notice"><strong>Nota de rigor:</strong> una práctica no se considera verificada solo por tener comandos preparados. Los valores que dependen de DNS, WHOIS o PTR deben confirmarse con una ejecución actual y conservar su evidencia.</div>
+<footer>Portfolio académico y técnico · Cisco Ethical Hacker · Uso educativo y pruebas exclusivamente autorizadas.</footer>
+</div>
+</body>
+</html>
