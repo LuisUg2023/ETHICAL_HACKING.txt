@@ -29,12 +29,13 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 ├── 01-reconocimiento-dns/
 │   ├── 01-dnsrecon/
 │   │   └── README.md
-│   ├── 02-busquedas-dns/
-│   │   └── README.md
-│   └── 03-certificados-ssl/
+│   └── 02-busquedas-dns/
 │       └── README.md
 ├── 02-osint-privacidad/
-│   └── 03-pii-redes-sociales/
+│   └── 01-pii-redes-sociales/
+│       └── README.md
+├── 03-seguridad-comunicaciones/
+│   └── 01-certificados-ssl/
 │       └── README.md
 └── evidencias/
     └── README.md
