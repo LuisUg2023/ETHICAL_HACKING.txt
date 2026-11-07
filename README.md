@@ -17,7 +17,9 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 | EH-01 | Reconocimiento y enumeración DNS con DNSRecon | Kali Linux, DNSRecon, dig, nslookup | Documentada; salida compartida analizada; revalidación pendiente |
 | EH-02 | Búsquedas de DNS | nslookup, dig, whois, host | Guía documentada; validar datos dinámicos |
 | EH-03 | Recopilación de PII en redes sociales | OSINT, redes sociales | Resuelta mediante simulación con códigos griegos; sin búsquedas reales |
-| EH-04 | Identificación y análisis de certificados SSL/TLS | crt.sh, curl, jq, OpenSSL, SSLScan | Guía documentada; ejemplo simulado; ejecución y evidencias pendientes |
+| EH-04 | Análisis de metadatos EXIF | ExifTool, Kali Linux | Guía documentada; ejecución y evidencias pendientes |
+| EH-05 | Google Dorks para reconocimiento OSINT | Google Search, operadores avanzados | Guía documentada; consultas reales autorizadas pendientes |
+| EH-06 | Identificación y análisis de certificados SSL/TLS | crt.sh, curl, jq, OpenSSL, SSLScan | Guía documentada; ejemplo simulado; ejecución y evidencias pendientes |
 
 ## Estructura
 ```text
@@ -32,7 +34,11 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 │   └── 02-busquedas-dns/
 │       └── README.md
 ├── 02-osint-privacidad/
-│   └── 01-pii-redes-sociales/
+│   ├── 01-pii-redes-sociales/
+│   │   └── README.md
+│   ├── 02-analisis-metadatos-exif/
+│   │   └── README.md
+│   └── 03-google-dorks/
 │       └── README.md
 ├── 03-seguridad-comunicaciones/
 │   └── 01-certificados-ssl/
@@ -42,7 +48,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 ```
 
 ## Cómo agregar una práctica
-1. Asignar un identificador correlativo: `EH-05`, `EH-06`, etc.
+1. Asignar un identificador correlativo: `EH-07`, `EH-08`, etc.
 2. Crear una carpeta dentro de la categoría correspondiente.
 3. Copiar la plantilla de `00-guia/plantilla-practica.md`.
 4. Registrar objetivo, entorno, comandos exactos y salida real.
@@ -60,11 +66,11 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 - Incluir fecha, sistema operativo, herramienta y versión cuando estén disponibles.
 - Diferenciar **resultado observado**, **interpretación** y **dato pendiente de validar**.
 - No inventar direcciones IP, registros DNS, resultados WHOIS, certificados ni vulnerabilidades.
-- Ocultar tokens, contraseñas, direcciones privadas y datos personales.
+- Ocultar tokens, contraseñas, direcciones privadas, coordenadas GPS y datos personales.
 - Ejecutar pruebas activas únicamente en sistemas propios o con autorización expresa.
 
 ## Alcance y ética
-Este repositorio tiene fines educativos y defensivos. Las consultas pasivas de fuentes públicas y las pruebas activas deben respetar las políticas del objetivo y las instrucciones del laboratorio Cisco NetAcad. SSLScan y otras pruebas de conexión se ejecutan solo dentro de un alcance autorizado.
+Este repositorio tiene fines educativos y defensivos. Las consultas OSINT deben limitarse a información pública y a un alcance autorizado. No se deben divulgar documentos sensibles, coordenadas GPS ni PII de terceros. SSLScan y otras pruebas activas se ejecutan solo dentro de un alcance autorizado.
 
 ## Portfolio web
 Abrir [index.html](./index.html) para consultar el índice visual de prácticas. Puede publicarse con GitHub Pages desde la rama `main`, carpeta raíz, si se habilita Pages en la configuración del repositorio.
