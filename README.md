@@ -35,6 +35,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 │   ├── 01-dnsrecon/
 │   └── 02-busquedas-dns/
 ├── 02-osint-privacidad/
+│   ├── README.md
 │   ├── 01-pii-redes-sociales/
 │   ├── 02-analisis-metadatos-exif/
 │   ├── 03-google-dorks/
