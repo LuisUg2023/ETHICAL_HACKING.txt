@@ -42,7 +42,9 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 │   ├── 05-recon-ng/
 │   └── 06-shodan/
 ├── 03-seguridad-comunicaciones/
+│   ├── README.md
 │   └── 01-certificados-ssl/
+│       └── README.md
 └── evidencias/
 ~~~
 
