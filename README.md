@@ -23,6 +23,7 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 | EH-07 | Identificación y análisis de certificados SSL/TLS | crt.sh, curl, jq, OpenSSL, SSLScan | Guía documentada; ejecución y evidencias pendientes |
 | EH-08 | Recon-ng: reconocimiento OSINT modular | Recon-ng, marketplace, módulos OSINT | Guía documentada; ejecución y evidencias pendientes |
 | EH-09 | Shodan: búsqueda de dispositivos y servicios expuestos | Shodan Web, Shodan CLI, API | Guía documentada; consultas y evidencias pendientes |
+| EH-10 | Enumeración con Nmap | Nmap, Kali Linux | Guía documentada; ejecución y evidencias pendientes |
 
 ## Estructura
 ~~~text
