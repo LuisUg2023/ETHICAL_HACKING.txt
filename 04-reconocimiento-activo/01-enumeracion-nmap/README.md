@@ -2,208 +2,258 @@
 
 ## 1. Datos generales
 - **Curso:** Cisco NetAcad — Ethical Hacker
-- **Práctica de referencia:** Práctica de laboratorio — Enumeración con Nmap
+- **Práctica:** Enumeración con Nmap
 - **Categoría:** Reconocimiento activo y enumeración de redes
-- **Estado:** Guía documentada; ejecución y evidencias pendientes
-- **Sistema previsto:** Kali Linux (máquina virtual del laboratorio Cisco)
-- **Herramienta principal:** Nmap
-- **Objetivo indicado por Cisco:** `10.6.6.23`
-- **Red de laboratorio indicada:** `10.6.6.0/24`
+- **Sistema:** Kali Linux
+- **Herramienta:** Nmap 7.95 (versión observada en la salida compartida)
+- **Red del laboratorio:** `10.6.6.0/24`
+- **Host indicado por Cisco:** `10.6.6.23`
 
-> **Importante:** las direcciones anteriores pertenecen al escenario de laboratorio descrito por Cisco. Ejecuta los comandos únicamente dentro de la topología autorizada del curso y confirma que estás conectado a esa red antes de escanear. No sustituyas el objetivo por una IP pública ni por equipos de terceros. Este documento no afirma que los comandos se hayan ejecutado ni inventa resultados.
+**Criterio de documentación:** los resultados que el usuario ejecutó y compartió se identifican como observados. Los ejemplos didácticos adicionales se identifican expresamente como simulados; no son evidencia de ejecución.
 
 ## 2. Objetivos
-1. Investigar Nmap y su función en el descubrimiento y mapeo de redes.
-2. Realizar escaneos básicos sobre el host asignado por el laboratorio.
-3. Identificar puertos TCP abiertos, servicios y versiones anunciadas.
-4. Interpretar los resultados para determinar qué servicios podrían requerir una revisión defensiva.
+1. Utilizar Nmap para descubrir hosts y enumerar servicios.
+2. Identificar puertos TCP, servicios y versiones anunciadas.
+3. Comprender la enumeración de recursos SMB mediante NSE.
+4. Interpretar los resultados desde una perspectiva defensiva.
+5. Registrar resultados y distinguir evidencia observada de escenarios de práctica.
 
 ## 3. Escenario y alcance
-El material Cisco describe una actividad inusual observada mediante Wireshark en una máquina de la DMZ. Se solicita realizar reconocimiento activo para identificar los servicios que ofrece y evaluar si existen aplicaciones que puedan representar un riesgo.
+El laboratorio Cisco plantea el análisis de una red virtual y del host `10.6.6.23`, dentro del segmento `10.6.6.0/24`. Todas las pruebas descritas se limitan a la topología autorizada del curso.
 
-| Elemento | Valor del escenario |
+| Elemento | Valor |
 |---|---|
-| Red virtual | `10.6.6.0/24` |
-| Host objetivo | `10.6.6.23` |
-| Sistema de análisis | Kali Linux |
-| Técnica | Escaneo de red y enumeración de servicios |
-| Restricción | Solo la topología proporcionada y autorizada por Cisco |
-
-La topología del archivo de Cisco también muestra otros equipos de la red virtual. No se deben escanear rangos completos ni direcciones adicionales salvo que el instructor lo solicite expresamente.
+| Segmento | `10.6.6.0/24` |
+| Objetivo individual | `10.6.6.23` |
+| Analizador | Kali Linux |
+| Herramienta | Nmap |
+| Tipo de actividad | Descubrimiento, escaneo de puertos y enumeración de servicios |
 
 ## 4. Fundamento técnico
-**Nmap (Network Mapper)** es una herramienta de código abierto para descubrir hosts, identificar puertos y obtener información de servicios. Sus resultados dependen del tipo de escaneo, los filtros de red, los permisos y el estado del objetivo.
+**Nmap (Network Mapper)** permite descubrir equipos, examinar puertos y reconocer servicios. Los resultados dependen de la conectividad, las rutas, los filtros, los permisos y las respuestas del objetivo.
 
-Conceptos clave:
-- **Host discovery:** determina si un equipo parece estar activo.
-- **Port scanning:** comprueba el estado de puertos TCP o UDP.
-- **Service/version detection:** intenta identificar el servicio y su versión.
-- **OS detection:** estima el sistema operativo mediante características de la pila de red; no siempre es concluyente.
-- **NSE:** motor de scripts de Nmap. Los scripts pueden generar tráfico adicional; en esta práctica inicial no se ejecutan scripts intrusivos.
+- **Host discovery:** determina si un host responde a las sondas de descubrimiento.
+- **Port scanning:** clasifica puertos como abiertos, cerrados o filtrados.
+- **Service/version detection:** intenta identificar aplicaciones y versiones.
+- **OS detection:** estima el sistema operativo a partir de respuestas de red.
+- **NSE:** motor de scripts de Nmap para automatizar tareas de reconocimiento y comprobación.
+
+La ausencia de respuesta a una sonda no demuestra por sí sola que el equipo esté apagado: puede haber filtrado, aislamiento de red o una ruta incorrecta.
 
 ## 5. Preparación del entorno
 
-### Paso 1. Confirmar que Nmap está instalado
+### 5.1 Comprobar Nmap
 ```bash
 nmap --version
 ```
-**Explicación:** muestra la versión instalada y permite comprobar que el ejecutable está disponible.
+Muestra la versión instalada. En la ejecución compartida para esta práctica, Nmap informó la versión **7.95**.
 
-Si no está instalado en la Kali del laboratorio:
-```bash
-sudo apt update
-sudo apt install nmap
-```
-**Explicación:**
-- `sudo`: ejecuta la operación con privilegios administrativos.
-- `apt update`: actualiza el índice local de paquetes.
-- `apt install nmap`: instala Nmap desde los repositorios configurados.
-
-### Paso 2. Confirmar la interfaz y la dirección local
+### 5.2 Revisar interfaz y rutas
 ```bash
 ip -br address
 ip route
+ip route get 10.6.6.23
 ```
-**Explicación:**
-- `ip -br address`: muestra interfaces y direcciones IP en formato resumido.
-- `ip route`: muestra las rutas disponibles y ayuda a confirmar la red conectada.
+- `ip -br address`: resume interfaces y direcciones IP.
+- `ip route`: muestra la tabla de enrutamiento.
+- `ip route get`: indica la ruta e interfaz que el sistema utilizaría para llegar al objetivo.
 
-Comprueba que la máquina Kali está conectada al segmento de laboratorio esperado. Si no estás en la red Cisco indicada, detente y no ejecutes los escaneos de las siguientes secciones.
+Estas comprobaciones permiten detectar si Kali está conectada al segmento correcto antes de interpretar un resultado de escaneo.
 
 ## 6. Procedimiento de enumeración
 
-### Paso 3. Comprobar disponibilidad del host objetivo
+### 6.1 Comprobar conectividad ICMP
 ```bash
 ping -c 4 10.6.6.23
 ```
-**Explicación:**
-- `ping`: envía solicitudes ICMP Echo.
-- `-c 4`: limita la prueba a cuatro solicitudes.
-- `10.6.6.23`: host asignado en el escenario.
+Envía cuatro solicitudes ICMP Echo al objetivo. Una respuesta confirma que el host responde a ICMP; la falta de respuesta puede deberse a filtrado y no confirma que esté apagado.
 
-**Interpretación:** recibir respuestas indica que el host responde a ICMP. La ausencia de respuesta no demuestra que esté apagado: un firewall puede bloquear ICMP.
-
-### Paso 4. Realizar descubrimiento de un único host
+### 6.2 Descubrir un único host
 ```bash
 nmap -sn 10.6.6.23
 ```
-**Explicación:**
-- `nmap`: inicia el escáner.
-- `-sn`: realiza descubrimiento de host y omite el escaneo de puertos.
-- `10.6.6.23`: limita el alcance a la IP indicada.
+La opción `-sn` realiza descubrimiento de host y omite el escaneo de puertos.
 
-Registra si Nmap informa que el host está activo. No interpretes la ausencia de respuesta como prueba definitiva de que el equipo no existe.
+### 6.3 Escanear la red del laboratorio
+```bash
+nmap -sn 10.6.6.0/24
+```
+Examina las 256 direcciones del bloque IPv4 `/24` mediante técnicas de descubrimiento de hosts. No es un escaneo de puertos.
 
-### Paso 5. Escaneo básico de puertos TCP
+**Resultado real compartido por el usuario:**
+```text
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-11-08 12:58 EST
+Stats: 0:00:54 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 26.37% done; ETC: 13:02 (0:02:31 remaining)
+Stats: 0:00:59 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 28.81% done; ETC: 13:02 (0:02:28 remaining)
+Stats: 0:01:01 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 29.98% done; ETC: 13:02 (0:02:25 remaining)
+Stats: 0:01:03 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 30.76% done; ETC: 13:02 (0:02:24 remaining)
+Stats: 0:01:05 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 31.74% done; ETC: 13:02 (0:02:22 remaining)
+Stats: 0:01:08 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 33.20% done; ETC: 13:02 (0:02:19 remaining)
+Stats: 0:01:12 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 35.16% done; ETC: 13:02 (0:02:15 remaining)
+Stats: 0:01:14 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 36.13% done; ETC: 13:02 (0:02:13 remaining)
+Stats: 0:01:17 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 37.60% done; ETC: 13:02 (0:02:09 remaining)
+Stats: 0:03:06 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 89.40% done; ETC: 13:02 (0:00:22 remaining)
+Stats: 0:03:29 elapsed; 0 hosts completed (0 up), 256 undergoing Ping Scan
+Ping Scan Timing: About 100.00% done; ETC: 13:02 (0:00:00 remaining)
+Nmap done: 256 IP addresses (0 hosts up) scanned in 210.05 seconds
+```
+
+**Interpretación del resultado observado:**
+- Nmap examinó 256 direcciones del rango.
+- No identificó hosts activos mediante las sondas utilizadas: `0 hosts up`.
+- La duración informada fue de **210,05 segundos**, aproximadamente **3 minutos y 30 segundos**.
+- Este resultado no coincide con el ejemplo del curso que muestra seis hosts activos. No se deben reemplazar los cero hosts observados por los seis del ejemplo.
+- El resultado no permite concluir por sí solo que todos los equipos estén apagados. Es necesario revisar la dirección IP de Kali, la ruta, el modo de red de la máquina virtual y posibles filtros.
+
+### 6.4 Escaneo TCP básico del objetivo
 ```bash
 nmap 10.6.6.23
 ```
-**Explicación:** realiza el escaneo TCP predeterminado de los puertos más comunes de Nmap. El resultado puede clasificar puertos como `open`, `closed` o `filtered`.
+Realiza el escaneo TCP predeterminado de los puertos más comunes de Nmap.
 
-### Paso 6. Identificar servicios y versiones
+### 6.5 Detección de servicios y versiones
 ```bash
 nmap -sV 10.6.6.23
 ```
-**Explicación:**
-- `-sV`: sondea los puertos detectados para intentar identificar el servicio y su versión.
-- La identificación es una estimación basada en respuestas; puede ser incompleta o incorrecta.
+La opción `-sV` envía sondas para intentar identificar los servicios y sus versiones en los puertos detectados.
 
-### Paso 7. Revisar el sistema operativo estimado
+### 6.6 Detección del sistema operativo
 ```bash
 sudo nmap -O 10.6.6.23
 ```
-**Explicación:**
-- `sudo`: permite utilizar las técnicas que requieren privilegios elevados.
-- `-O`: habilita la detección de sistema operativo.
-- La detección puede fallar si hay pocos puertos observables, filtrado o dispositivos intermedios.
+La opción `-O` habilita la detección de sistema operativo. Requiere condiciones de red adecuadas y puede no producir una identificación concluyente.
 
-### Paso 8. Guardar resultados en un archivo
+### 6.7 Guardar la salida
 ```bash
 mkdir -p evidencias/EH-10
 nmap -sV -oN evidencias/EH-10/nmap-servicios.txt 10.6.6.23
 ```
-**Explicación:**
-- `mkdir -p`: crea el directorio de evidencias si todavía no existe.
-- `-sV`: intenta identificar servicios y versiones.
-- `-oN`: guarda la salida en formato normal legible.
-- La ruta del archivo permite conservar el resultado para su análisis posterior.
+- `mkdir -p`: crea el directorio de salida.
+- `-sV`: solicita detección de versiones.
+- `-oN`: guarda el resultado en formato normal legible.
 
-El archivo solo contendrá datos reales después de ejecutar el comando en la máquina del laboratorio.
+## 7. Enumeración de usuarios SMB con NSE
 
-## 7. Opciones de Nmap que debes reconocer
+El laboratorio puede incluir la comprobación de servicios SMB en los puertos TCP 139 y 445. El script `smb-enum-users.nse` intenta obtener información de cuentas de usuario expuestas por el servicio SMB.
+
+### 7.1 Comprobar que el script existe
+```bash
+ls /usr/share/nmap/scripts/smb-enum-users.nse
+```
+Si el archivo no se encuentra, se puede actualizar la base local de scripts con:
+```bash
+sudo nmap --script-updatedb
+```
+
+### 7.2 Ejecutar la enumeración en el host autorizado
+```bash
+nmap --script smb-enum-users.nse -p139,445 10.6.6.23
+```
+
+| Elemento | Función |
+|---|---|
+| `nmap` | Ejecuta el escáner. |
+| `--script` | Selecciona un script NSE. |
+| `smb-enum-users.nse` | Intenta enumerar cuentas de usuario SMB. |
+| `-p139,445` | Limita la comprobación a los puertos TCP 139 y 445. |
+| `10.6.6.23` | Host objetivo del laboratorio Cisco. |
+
+El resultado depende de que el host sea alcanzable, que SMB esté disponible y que la configuración del servidor permita obtener esa información. Un resultado sin usuarios enumerados no demuestra que no existan cuentas.
+
+### 7.3 Ejemplo didáctico de salida SMB (simulado)
+Los nombres son ficticios y no corresponden al resultado real del host Cisco.
+
+```text
+PORT    STATE SERVICE
+139/tcp open  netbios-ssn
+445/tcp open  microsoft-ds
+
+Host script results:
+| smb-enum-users:
+|   Users
+|     LAB_USER_A
+|     LAB_USER_B
+|     LAB_SUPPORT
+```
+
+**Interpretación del ejemplo:** si el script revela cuentas, el analista debe determinar si esa enumeración es necesaria para la operación. La exposición innecesaria de nombres de usuario facilita la preparación de ataques de fuerza bruta o ingeniería social.
+
+## 8. Opciones de Nmap de referencia
 
 | Opción | Función |
 |---|---|
-| `-A` | Habilita detección de SO, versiones, scripts por defecto y traceroute. Es más intrusiva; no usar sin indicación y autorización del laboratorio. |
-| `-O` | Detección estimada del sistema operativo. |
-| `-p` | Especifica puertos o rangos de puertos, por ejemplo `-p 22,80,443`. |
-| `-sF` | Escaneo TCP FIN. Su interpretación depende del sistema y de los filtros. |
+| `-A` | Activa detección de SO, versiones, scripts por defecto y traceroute. Genera más tráfico. |
+| `-O` | Estima el sistema operativo. |
+| `-p` | Especifica puertos o rangos, por ejemplo `-p 22,80,443`. |
+| `-sF` | Realiza un escaneo TCP FIN. Su interpretación depende del sistema y de los filtros. |
 | `-sn` | Descubrimiento de hosts sin escaneo de puertos. |
 | `-sS` | Escaneo TCP SYN; normalmente requiere privilegios elevados. |
 | `-sT` | Escaneo TCP connect(), completa la conexión TCP. |
-| `-sV` | Detección de servicios y versiones. |
-| `-T0` a `-T5` | Plantillas de temporización; valores altos son más rápidos y pueden resultar más ruidosos. |
+| `-sV` | Detecta servicios y versiones. |
+| `-T0` a `-T5` | Ajusta la temporización; valores altos aumentan la velocidad y el volumen de tráfico. |
+| `--script` | Ejecuta uno o varios scripts NSE seleccionados. |
 
-No ejecutes todas las opciones en bloque. Selecciona la técnica que corresponda al objetivo del paso y a las instrucciones del instructor.
+## 9. Ejemplo integrado de resultados para practicar el análisis (simulado)
 
-## 8. Registro de resultados observados
+Esta tabla es un escenario didáctico independiente. No describe el resultado real del escaneo de red compartido.
 
-Completa esta sección con la salida obtenida en Kali. No rellenes los campos con resultados supuestos.
+| Puerto/protocolo | Estado simulado | Servicio de ejemplo | Interpretación defensiva |
+|---|---|---|---|
+| 22/tcp | open | SSH | Restringir acceso administrativo y usar autenticación robusta. |
+| 80/tcp | open | HTTP | Revisar si debe redirigir a HTTPS y evitar transmitir credenciales sin cifrado. |
+| 139/tcp | open | NetBIOS-SSN | Limitar SMB/NetBIOS a redes internas autorizadas. |
+| 445/tcp | open | Microsoft-DS/SMB | Revisar versión SMB, permisos compartidos y reglas de firewall. |
+| 443/tcp | open | HTTPS | Revisar configuración TLS, certificados y protocolos permitidos. |
 
-| Comprobación | Resultado real |
-|---|---|
-| Versión de Nmap | Pendiente |
-| Conectividad ICMP | Pendiente |
-| Estado del host según `-sn` | Pendiente |
-| Puertos TCP detectados | Pendiente |
-| Servicios y versiones | Pendiente |
-| Sistema operativo estimado | Pendiente |
-| Archivo de salida generado | Pendiente |
+No se debe inferir que estos puertos están abiertos en `10.6.6.23`; son valores ilustrativos para practicar la lectura de una tabla de Nmap.
 
-### Plantilla para describir cada puerto
-| Puerto/protocolo | Estado | Servicio detectado | Versión | Observación |
-|---|---|---|---|---|
-| Pendiente | Pendiente | Pendiente | Pendiente | Completar con la salida real |
+## 10. Análisis de seguridad
+1. Contrastar cada puerto con el inventario y la función del equipo.
+2. Determinar si el servicio es necesario y si está expuesto a los segmentos adecuados.
+3. Verificar versiones y soporte del fabricante antes de afirmar que existe una vulnerabilidad.
+4. Revisar las políticas de firewall, segmentación y autenticación.
+5. Considerar falsos positivos, filtrado, banners modificados y limitaciones de detección.
+6. En SMB, revisar el acceso a recursos compartidos, la exposición de cuentas y la configuración de SMBv1.
 
-## 9. Análisis de seguridad
-Al interpretar los resultados:
-1. Verifica si cada puerto abierto corresponde a un servicio esperado para el rol del host.
-2. Comprueba si la versión identificada tiene soporte del fabricante y actualizaciones disponibles.
-3. No declares una vulnerabilidad solo porque un puerto esté abierto o porque Nmap identifique una versión.
-4. Valida los hallazgos con inventario, configuración del servicio y fuentes oficiales del fabricante.
-5. Considera falsos positivos, banners modificados, proxies, firewalls y limitaciones de detección.
+### Análisis del resultado real de descubrimiento
+El escaneo de red registrado detectó cero hosts activos en 210,05 segundos. Por tanto, esa ejecución no permite elaborar un inventario de hosts activos ni atribuir servicios a los equipos del segmento. La diferencia con los seis hosts del ejemplo Cisco debe investigarse revisando primero la configuración de red de Kali y la conectividad hacia el segmento del laboratorio.
 
-## 10. Mitigaciones defensivas
-- Deshabilitar servicios que no sean necesarios.
-- Restringir puertos mediante reglas de firewall y segmentación de red.
-- Mantener servicios y sistemas operativos actualizados.
-- Evitar exponer interfaces administrativas a redes no confiables.
-- Aplicar autenticación robusta y registros de auditoría.
-- Repetir el escaneo autorizado después de aplicar cambios para comprobar su eficacia.
-
-## 11. Evidencias pendientes
-- [ ] Captura de `nmap --version`.
-- [ ] Captura de la interfaz y rutas de Kali, ocultando datos ajenos al laboratorio.
-- [ ] Salida real de `ping` o explicación de por qué no responde.
-- [ ] Salida real de `nmap -sn`.
-- [ ] Salida real de escaneo de puertos.
-- [ ] Salida real de `nmap -sV`.
-- [ ] Salida real de detección de SO, si se ejecutó.
-- [ ] Archivo `nmap-servicios.txt` revisado y sanitizado.
+## 11. Mitigaciones defensivas
+- Deshabilitar servicios y protocolos que no sean necesarios.
+- Restringir TCP 139 y 445 mediante firewall a los equipos que requieran SMB.
+- Deshabilitar SMBv1 cuando no exista una dependencia justificada.
+- Aplicar permisos mínimos a carpetas compartidas y cuentas de servicio.
+- Evitar la enumeración anónima de usuarios y recursos SMB.
+- Mantener sistemas operativos y servicios actualizados.
+- Segmentar redes administrativas, servidores y estaciones de trabajo.
+- Registrar y revisar conexiones SMB y eventos de autenticación.
 
 ## 12. Conclusiones
-La práctica introduce el reconocimiento activo con Nmap y la enumeración de puertos, servicios y versiones. La documentación establece un procedimiento reproducible y acotado al host indicado por Cisco. Las conclusiones técnicas sobre el equipo quedan pendientes hasta disponer de resultados obtenidos en la máquina Kali del laboratorio.
+La ejecución real compartida de `nmap -sn 10.6.6.0/24` examinó 256 direcciones y no detectó hosts activos; Nmap informó una duración de 210,05 segundos. El resultado se conserva tal como fue observado y no se reemplaza por los seis hosts del ejemplo Cisco.
+
+La práctica documenta además los comandos para escaneo TCP, identificación de versiones, detección de sistema operativo y enumeración SMB. Los resultados ilustrativos de puertos y usuarios están marcados como simulados y sirven únicamente para aprender a interpretar las salidas. La enumeración SMB debe realizarse exclusivamente contra el equipo autorizado del laboratorio.
 
 ## 13. Referencias
-- Cisco NetAcad — *Práctica de laboratorio: Enumeración con Nmap* (material proporcionado para el curso).
+- Cisco NetAcad — *Práctica de laboratorio: Enumeración con Nmap* (material del curso).
 - Nmap Reference Guide: https://nmap.org/book/man.html
-- Nmap Documentation: https://nmap.org/docs.html
+- Nmap NSE Documentation: https://nmap.org/book/nse.html
+- Nmap Script smb-enum-users: https://nmap.org/nsedoc/scripts/smb-enum-users.html
 
-## 14. Estado de validación
-- [x] Objetivos y alcance documentados.
-- [x] Comandos y opciones explicados.
-- [x] Restricciones de autorización indicadas.
-- [ ] Comandos ejecutados en la topología Cisco.
-- [ ] Resultados reales registrados.
-- [ ] Evidencias guardadas y sanitizadas.
-- [ ] Análisis validado con los resultados.
+## 14. Resumen de validación documental
+- [x] Objetivos, alcance y conceptos explicados.
+- [x] Comandos de descubrimiento, escaneo y detección documentados.
+- [x] Resultado real del escaneo de red incorporado sin alteraciones.
+- [x] Duración y cantidad de hosts detectados analizadas.
+- [x] Enumeración SMB y parámetros explicados.
+- [x] Ejemplos simulados identificados explícitamente.
+- [x] Análisis y mitigaciones defensivas incluidos.
