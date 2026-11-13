@@ -24,8 +24,10 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 | EH-08 | Recon-ng: reconocimiento OSINT modular | Recon-ng, marketplace, módulos OSINT | Guía documentada; ejecución y evidencias pendientes |
 | EH-09 | Shodan: búsqueda de dispositivos y servicios expuestos | Shodan Web, Shodan CLI, API | Guía documentada; consultas y evidencias pendientes |
 | EH-10 | Enumeración con Nmap | Nmap, Kali Linux | Guía documentada; ejecución y evidencias pendientes |
+| EH-11 | Elaboración y captura de paquetes con Scapy | Scapy, Kali Linux, Wireshark | Interfaz identificada; captura bloqueada por error de permisos |
 
 ## Estructura
+
 ~~~text
 .
 ├── README.md
@@ -47,11 +49,15 @@ Repositorio de aprendizaje práctico en ciberseguridad. Documenta progresivament
 │   ├── README.md
 │   └── 01-certificados-ssl/
 │       └── README.md
-└── evidencias/
+├── 04-reconocimiento-activo/
+│   └── 01-enumeracion-nmap/
+└── 05-analisis-trafico-red/
+    └── 01-scapy/
+        └── README.md
 ~~~
 
 ## Cómo agregar una práctica
-1. Asignar un identificador correlativo: EH-10, EH-11, etc.
+1. Asignar un identificador correlativo: EH-12, EH-13, etc.
 2. Crear una carpeta dentro de la categoría correspondiente.
 3. Copiar la plantilla de 00-guia/plantilla-practica.md.
 4. Registrar objetivo, entorno, comandos exactos y salida real.
